@@ -1,46 +1,38 @@
 # Ghost Drop Web
 
-Phase 1 scaffold for a privacy-first, client-side image metadata sanitizer.
+Privacy-first, client-side-only image metadata sanitizer.
 
-## Phase 1 Status
+## Current Status
 
-Implemented in this repository:
-- React + TypeScript + Vite scaffold.
-- Tailwind CSS dark-mode configuration with black + neon styling.
-- Responsive UI with:
-  - Hero: `Ghost Drop: Incinerate Your Metadata.`
-  - Drag-and-drop zone that pulses on drag active.
-  - Footer privacy statement.
+- ✅ **Phase 1 complete:** React + Vite + Tailwind cyberpunk UI scaffold.
+- ✅ **Phase 2 complete:** In-browser metadata shredding hook with no recompression.
+- ✅ **Phase 3 complete:** Dropzone interaction loop wired with Idle/Processing/Done states, auto-download, and mobile Web Share support.
+- ⏳ **Phase 4 pending:** PWA install/offline/share-target manifest and service worker.
 
-## Privacy Notes (Phase 1)
+## Privacy Guarantees
 
-- No backend code exists in this project.
-- No upload API calls are implemented.
-- UI accepts image files locally through browser file input only.
+- No backend server exists in this project.
+- No image data is uploaded to any API.
+- All sanitization occurs in browser memory.
+- Original visual quality is preserved by removing metadata at container/chunk level instead of canvas re-encoding.
 
-## Development
+## Phase 3 Behavior
+
+1. **Idle:** `Drop image here to sanitize.`
+2. **Processing:** Shows `Shredding metadata...` with a progress bar pulse (minimum 500ms UX delay).
+3. **Done:** Shows `Clean! (GPS Removed)`, auto-downloads `<original>_clean.<ext>`, and displays a Share button when `navigator.share` is supported.
+
+## Local Development
 
 ```bash
 npm install
 npm run dev
 ```
 
-
-## Phase 2 Setup Commands
-
-```bash
-# install dependencies
-npm install
-
-# run development server
-npm run dev
-
-# build validation
-npm run build
-```
-
-## Validation Commands
+## Validation
 
 ```bash
 npm run build
 ```
+
+> Note: Installing additional npm packages may be blocked by environment policy in this workspace (HTTP 403 from registry).
