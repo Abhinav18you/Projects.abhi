@@ -1,7 +1,101 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { useMetadataShredder } from './hooks/useMetadataShredder';
+
+type SanitizeState = 'idle' | 'processing' | 'done';
+
+const PROCESSING_DELAY_MS = 500;
+
+const toCleanFileName = (fileName: string): string => {
+  const dotIndex = fileName.lastIndexOf('.');
+
+  if (dotIndex <= 0) {
+    return `${fileName}_clean`;
+  }
+
+  const base = fileName.slice(0, dotIndex);
+  const extension = fileName.slice(dotIndex);
+  return `${base}_clean${extension}`;
+};
+
+const wait = (durationMs: number): Promise<void> =>
+  new Promise((resolve) => {
+    setTimeout(resolve, durationMs);
+  });
 
 function App() {
+  const { shredMetadata, isProcessing, error } = useMetadataShredder();
+  const [sanitizeState, setSanitizeState] = useState<SanitizeState>('idle');
+  const [statusMessage, setStatusMessage] = useState('Drop image here to sanitize.');
+  const [shareFile, setShareFile] = useState<File | null>(null);
+
+  const handleDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      const sourceFile = acceptedFiles[0];
+      if (!sourceFile) {
+        return;
+      }
+
+      try {
+        setShareFile(null);
+        setSanitizeState('processing');
+        setStatusMessage('Shredding metadata...');
+
+        const [cleanBlob] = await Promise.all([shredMetadata(sourceFile), wait(PROCESSING_DELAY_MS)]);
+        const cleanFileName = toCleanFileName(sourceFile.name);
+        const cleanFile = new File([cleanBlob], cleanFileName, {
+          type: sourceFile.type,
+          lastModified: Date.now(),
+        });
+
+        const downloadUrl = URL.createObjectURL(cleanBlob);
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = cleanFileName;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(downloadUrl);
+
+        setShareFile(cleanFile);
+        setSanitizeState('done');
+        setStatusMessage('Clean! (GPS Removed)');
+      } catch {
+        setSanitizeState('idle');
+        setStatusMessage('Unable to sanitize file. Try another image.');
+      }
+    },
+    [shredMetadata],
+  );
+
+  const canShare = useMemo(() => {
+    if (!shareFile || typeof navigator === 'undefined' || typeof navigator.share !== 'function') {
+      return false;
+    }
+
+    if (typeof navigator.canShare === 'function') {
+      return navigator.canShare({ files: [shareFile] });
+    }
+
+    return true;
+  }, [shareFile]);
+
+  const handleShare = useCallback(async () => {
+    if (!shareFile || !canShare) {
+      return;
+    }
+
+    try {
+      await navigator.share({
+        files: [shareFile],
+        title: 'Ghost Drop: Clean image',
+        text: 'Metadata removed locally with Ghost Drop Web.',
+      });
+    } catch {
+      // User cancellation is expected behavior for Web Share dialogs.
+    }
+  }, [canShare, shareFile]);
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
       'image/jpeg': ['.jpg', '.jpeg'],
@@ -9,6 +103,8 @@ function App() {
       'image/webp': ['.webp'],
     },
     multiple: false,
+    disabled: isProcessing,
+    onDrop: handleDrop,
   });
 
   const zoneClasses = useMemo(
@@ -17,8 +113,9 @@ function App() {
         'w-full max-w-3xl rounded-2xl border border-neon/60 bg-zinc-950/70 p-8 text-center transition duration-300',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-neon/80 focus-visible:ring-offset-2 focus-visible:ring-offset-black',
         isDragActive ? 'animate-pulseNeon border-neon shadow-neon' : 'hover:border-neonSoft/70',
+        isProcessing ? 'cursor-wait opacity-90' : 'cursor-pointer',
       ].join(' '),
-    [isDragActive],
+    [isDragActive, isProcessing],
   );
 
   return (
@@ -37,11 +134,30 @@ function App() {
         <section className="flex flex-1 items-center justify-center pb-12">
           <div {...getRootProps({ className: zoneClasses, role: 'button', tabIndex: 0 })}>
             <input {...getInputProps()} />
-            <div className="space-y-3">
+            <div className="space-y-4">
               <p className="text-xl font-medium text-neon md:text-2xl">
-                {isDragActive ? 'Drop now. Burn EXIF.' : 'Drop image here to sanitize.'}
+                {isDragActive ? 'Drop now. Burn EXIF.' : statusMessage}
               </p>
+
               <p className="text-sm text-zinc-400">JPG, PNG, WEBP • Client-side only</p>
+
+              {sanitizeState === 'processing' ? (
+                <div className="mx-auto mt-4 h-2 w-full max-w-md overflow-hidden rounded-full bg-zinc-900">
+                  <div className="h-full w-full origin-left animate-pulse bg-neon/80" />
+                </div>
+              ) : null}
+
+              {sanitizeState === 'done' && canShare ? (
+                <button
+                  type="button"
+                  onClick={handleShare}
+                  className="mx-auto inline-flex items-center rounded-md border border-neon/60 px-4 py-2 text-sm text-neon transition hover:border-neon hover:bg-neon/10"
+                >
+                  Share
+                </button>
+              ) : null}
+
+              {error ? <p className="text-sm text-red-400">{error}</p> : null}
             </div>
           </div>
         </section>

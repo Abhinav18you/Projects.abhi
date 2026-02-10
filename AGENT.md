@@ -7,8 +7,8 @@
 
 ## Phase Plan (Authoritative)
 1. **Phase 1 (done):** React + Vite + Tailwind UI scaffold.
-2. **Phase 2 (in progress here):** Build metadata shredding logic.
-3. **Phase 3 (pending):** Connect UI states + download/share loop.
+2. **Phase 2 (done):** Metadata shredding logic.
+3. **Phase 3 (done in this attempt):** Connected UI states + download/share loop.
 4. **Phase 4 (pending):** PWA install + offline + share target.
 
 ## What Was Already Done Before This Attempt
@@ -16,40 +16,28 @@
 - Tailwind dark cyberpunk styling applied.
 - Hero + drag-and-drop zone + privacy footer implemented.
 - No backend endpoints, no upload flow.
+- `useMetadataShredder` hook implemented with no-recompression metadata stripping.
 
-## What This Attempt Adds
-- Added a new hook at `src/hooks/useMetadataShredder.ts`.
-- Hook accepts JPG/PNG/WEBP files and returns sanitized `Blob` output.
-- Metadata removal is done as **container-level binary chunk/segment stripping** to avoid image recompression:
-  - JPEG: removes metadata APP markers (APP1/APP2/APP13) while preserving compatibility markers.
-  - PNG: removes metadata chunks (`eXIf`, `iTXt`, `tEXt`, `zTXt`, `tIME`).
-  - WEBP: removes `EXIF` and `XMP ` chunks and updates `VP8X` flags.
-- Hook exposes `isProcessing` and `error` for UI integration in Phase 3.
+## What This Attempt Adds (Phase 3)
+- Wired `useMetadataShredder` into `react-dropzone` `onDrop` flow.
+- Added 3-state interaction loop:
+  - Idle: `Drop image here to sanitize.`
+  - Processing: `Shredding metadata...` with 500ms minimum UX delay and progress pulse.
+  - Done: `Clean! (GPS Removed)`.
+- Added automatic sanitized file download with `_clean` filename suffix.
+- Added mobile-first Web Share button using `navigator.share` + `navigator.canShare` checks.
+- Added dropzone disable/visual wait state while processing.
 
-## Current Status
-- Phase 2 core logic exists in a reusable hook with safer JPEG marker handling and WEBP VP8X flag updates.
-- Hook not yet wired into the dropzone UI (intentionally deferred to Phase 3).
+## Security and Privacy Validation Notes
+- No network requests were introduced.
+- No backend or upload routes were added.
+- Processing remains fully in-memory and local to the browser.
 
 ## Known Constraints / Environment Notes
 - Package registry access is restricted in this environment.
-- `npm install` fails with HTTP 403 against `registry.npmjs.org` (cannot install dependencies currently).
-- Implementation avoids requiring newly installed packages until registry access is available.
+- `npm install file-saver` failed with HTTP 403; native browser download API is used instead.
 
-## Do / Don’t for Future Agents
-### Do
-- Keep all processing in-browser and in-memory.
-- Preserve original image quality (no canvas re-encode for metadata removal).
-- Keep code auditable and explicit for open-source review.
-- Continue phase-by-phase; do not jump ahead unless explicitly requested.
-
-### Don’t
-- Don’t introduce backend upload endpoints.
-- Don’t send files to third-party APIs.
-- Don’t add compression/transcoding as part of metadata stripping.
-- Don’t remove this context file; update it instead.
-
-## Next Actions (Phase 3 target)
-- Wire `useMetadataShredder` into `react-dropzone` flow.
-- Add Idle/Processing/Done UI states.
-- Trigger file download with clean naming convention.
-- Add mobile `navigator.share` fallback path.
+## Next Actions (Phase 4 target)
+- Add web app manifest and install metadata.
+- Add service worker for offline capability.
+- Configure Web Share Target API in manifest for Android inbound gallery shares.
