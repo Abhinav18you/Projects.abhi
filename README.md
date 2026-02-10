@@ -25,6 +25,20 @@ npm install
 npm run dev
 ```
 
+
+## Phase 2 Setup Commands
+
+```bash
+# install dependencies
+npm install
+
+# run development server
+npm run dev
+
+# build validation
+npm run build
+```
+
 ## Validation Commands
 
 ```bash
