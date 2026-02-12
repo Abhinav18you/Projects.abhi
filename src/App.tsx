@@ -1,10 +1,11 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useMetadataShredder } from './hooks/useMetadataShredder';
 
 type SanitizeState = 'idle' | 'processing' | 'done';
 
 const PROCESSING_DELAY_MS = 500;
+const SHARED_IMAGE_ENDPOINT = '/shared-image';
 
 const toCleanFileName = (fileName: string): string => {
   const dotIndex = fileName.lastIndexOf('.');
@@ -23,19 +24,25 @@ const wait = (durationMs: number): Promise<void> =>
     setTimeout(resolve, durationMs);
   });
 
+const triggerDownload = (blob: Blob, downloadName: string): void => {
+  const downloadUrl = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = downloadUrl;
+  link.download = downloadName;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(downloadUrl);
+};
+
 function App() {
   const { shredMetadata, isProcessing, error } = useMetadataShredder();
   const [sanitizeState, setSanitizeState] = useState<SanitizeState>('idle');
   const [statusMessage, setStatusMessage] = useState('Drop image here to sanitize.');
   const [shareFile, setShareFile] = useState<File | null>(null);
 
-  const handleDrop = useCallback(
-    async (acceptedFiles: File[]) => {
-      const sourceFile = acceptedFiles[0];
-      if (!sourceFile) {
-        return;
-      }
-
+  const sanitizeFile = useCallback(
+    async (sourceFile: File) => {
       try {
         setShareFile(null);
         setSanitizeState('processing');
@@ -48,14 +55,7 @@ function App() {
           lastModified: Date.now(),
         });
 
-        const downloadUrl = URL.createObjectURL(cleanBlob);
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.download = cleanFileName;
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        URL.revokeObjectURL(downloadUrl);
+        triggerDownload(cleanBlob, cleanFileName);
 
         setShareFile(cleanFile);
         setSanitizeState('done');
@@ -67,6 +67,49 @@ function App() {
     },
     [shredMetadata],
   );
+
+  const handleDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      const sourceFile = acceptedFiles[0];
+      if (!sourceFile) {
+        return;
+      }
+
+      await sanitizeFile(sourceFile);
+    },
+    [sanitizeFile],
+  );
+
+  useEffect(() => {
+    const loadSharedTarget = async () => {
+      const query = new URLSearchParams(window.location.search);
+      if (!query.has('share-target')) {
+        return;
+      }
+
+      try {
+        const response = await fetch(SHARED_IMAGE_ENDPOINT);
+        if (!response.ok) {
+          setStatusMessage('No shared image was found. Try sharing again.');
+          return;
+        }
+
+        const sharedBlob = await response.blob();
+        const headerFileName = response.headers.get('X-Shared-File-Name');
+        const decodedName = headerFileName ? decodeURIComponent(headerFileName) : 'shared-image';
+        const inferredType = sharedBlob.type || 'image/jpeg';
+        const sharedFile = new File([sharedBlob], decodedName, { type: inferredType, lastModified: Date.now() });
+
+        await sanitizeFile(sharedFile);
+      } catch {
+        setStatusMessage('Shared image could not be loaded offline.');
+      } finally {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    };
+
+    loadSharedTarget();
+  }, [sanitizeFile]);
 
   const canShare = useMemo(() => {
     if (!shareFile || typeof navigator === 'undefined' || typeof navigator.share !== 'function') {
