@@ -9,11 +9,19 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.34.0",
+    "peerjs": "^1.5.5",
+    "piexifjs": "^1.0.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-dropzone": "^14.3.5"
+    "react-dropzone": "^14.3.5",
+    "tailwind-merge": "^3.4.0",
+    "wouter": "^3.9.0",
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
+    "@types/piexifjs": "^1.0.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.3",

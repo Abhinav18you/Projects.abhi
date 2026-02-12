@@ -19,9 +19,9 @@ const JPEG_METADATA_APP_MARKERS = new Set([0xe1, 0xe2, 0xed]);
 
 const textEncoder = new TextEncoder();
 
-const assertSupportedType = (file: File): SupportedMimeType => {
-  if (SUPPORTED_MIME_TYPES.includes(file.type as SupportedMimeType)) {
-    return file.type as SupportedMimeType;
+const assertSupportedType = (blob: Blob): SupportedMimeType => {
+  if (SUPPORTED_MIME_TYPES.includes(blob.type as SupportedMimeType)) {
+    return blob.type as SupportedMimeType;
   }
 
   throw new Error('Unsupported file type. Please use JPG, PNG, or WEBP.');
@@ -275,13 +275,13 @@ export const useMetadataShredder = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const shredMetadata = useCallback(async (file: File): Promise<Blob> => {
-    const mimeType = assertSupportedType(file);
+  const shredMetadata = useCallback(async (blob: Blob): Promise<Blob> => {
+    const mimeType = assertSupportedType(blob);
     setError(null);
     setIsProcessing(true);
 
     try {
-      const sourceBuffer = await file.arrayBuffer();
+      const sourceBuffer = await blob.arrayBuffer();
       const cleanBuffer = stripMetadata(sourceBuffer, mimeType);
       return new Blob([cleanBuffer], { type: mimeType });
     } catch (unknownError) {
