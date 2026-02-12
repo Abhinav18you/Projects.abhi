@@ -27,8 +27,27 @@ const assertSupportedType = (file: File): SupportedMimeType => {
   throw new Error('Unsupported file type. Please use JPG, PNG, or WEBP.');
 };
 
-const sliceToString = (view: Uint8Array, start: number, length: number): string =>
-  String.fromCharCode(...view.slice(start, start + length));
+const sliceToString = (view: Uint8Array, start: number, length: number): string => {
+  let output = '';
+
+  for (let index = 0; index < length; index += 1) {
+    output += String.fromCharCode(view[start + index]);
+  }
+
+  return output;
+};
+
+const concatByteChunks = (chunks: Uint8Array[], totalLength: number): ArrayBuffer => {
+  const output = new Uint8Array(totalLength);
+  let writeOffset = 0;
+
+  chunks.forEach((chunk) => {
+    output.set(chunk, writeOffset);
+    writeOffset += chunk.length;
+  });
+
+  return output.buffer;
+};
 
 const isJpegMetadataMarker = (marker: number): boolean => JPEG_METADATA_APP_MARKERS.has(marker);
 
@@ -39,12 +58,15 @@ const stripJpegMetadata = (buffer: ArrayBuffer): ArrayBuffer => {
     return buffer;
   }
 
-  const output: number[] = [0xff, 0xd8];
+  const chunks: Uint8Array[] = [bytes.subarray(0, 2)];
+  let totalLength = 2;
   let offset = 2;
 
   while (offset + 1 < bytes.length) {
     if (bytes[offset] !== 0xff) {
-      output.push(...bytes.slice(offset));
+      const remaining = bytes.subarray(offset);
+      chunks.push(remaining);
+      totalLength += remaining.length;
       break;
     }
 
@@ -52,18 +74,24 @@ const stripJpegMetadata = (buffer: ArrayBuffer): ArrayBuffer => {
 
     // EOI
     if (marker === 0xd9) {
-      output.push(0xff, 0xd9);
+      const eoi = bytes.subarray(offset, offset + 2);
+      chunks.push(eoi);
+      totalLength += eoi.length;
       break;
     }
 
     // SOS, copy remainder as image stream.
     if (marker === 0xda) {
-      output.push(...bytes.slice(offset));
+      const imageStream = bytes.subarray(offset);
+      chunks.push(imageStream);
+      totalLength += imageStream.length;
       break;
     }
 
     if (offset + 3 >= bytes.length) {
-      output.push(...bytes.slice(offset));
+      const remaining = bytes.subarray(offset);
+      chunks.push(remaining);
+      totalLength += remaining.length;
       break;
     }
 
@@ -71,18 +99,22 @@ const stripJpegMetadata = (buffer: ArrayBuffer): ArrayBuffer => {
     const segmentEnd = offset + 2 + segmentLength;
 
     if (segmentLength < 2 || segmentEnd > bytes.length) {
-      output.push(...bytes.slice(offset));
+      const remaining = bytes.subarray(offset);
+      chunks.push(remaining);
+      totalLength += remaining.length;
       break;
     }
 
     if (!isJpegMetadataMarker(marker)) {
-      output.push(...bytes.slice(offset, segmentEnd));
+      const segment = bytes.subarray(offset, segmentEnd);
+      chunks.push(segment);
+      totalLength += segment.length;
     }
 
     offset = segmentEnd;
   }
 
-  return new Uint8Array(output).buffer;
+  return concatByteChunks(chunks, totalLength);
 };
 
 const stripPngMetadata = (buffer: ArrayBuffer): ArrayBuffer => {
@@ -92,7 +124,8 @@ const stripPngMetadata = (buffer: ArrayBuffer): ArrayBuffer => {
     return buffer;
   }
 
-  const output: number[] = [...PNG_SIGNATURE];
+  const chunks: Uint8Array[] = [PNG_SIGNATURE];
+  let totalLength = PNG_SIGNATURE.length;
   let offset = PNG_SIGNATURE.length;
 
   while (offset + 8 <= bytes.length) {
@@ -103,7 +136,9 @@ const stripPngMetadata = (buffer: ArrayBuffer): ArrayBuffer => {
       bytes[offset + 3];
 
     if (length < 0) {
-      output.push(...bytes.slice(offset));
+      const remaining = bytes.subarray(offset);
+      chunks.push(remaining);
+      totalLength += remaining.length;
       break;
     }
 
@@ -111,14 +146,18 @@ const stripPngMetadata = (buffer: ArrayBuffer): ArrayBuffer => {
     const chunkEnd = offset + chunkTotalLength;
 
     if (chunkEnd > bytes.length) {
-      output.push(...bytes.slice(offset));
+      const remaining = bytes.subarray(offset);
+      chunks.push(remaining);
+      totalLength += remaining.length;
       break;
     }
 
     const chunkType = sliceToString(bytes, offset + 4, 4);
 
     if (!PNG_METADATA_CHUNKS.has(chunkType)) {
-      output.push(...bytes.slice(offset, chunkEnd));
+      const chunk = bytes.subarray(offset, chunkEnd);
+      chunks.push(chunk);
+      totalLength += chunk.length;
     }
 
     offset = chunkEnd;
@@ -128,7 +167,7 @@ const stripPngMetadata = (buffer: ArrayBuffer): ArrayBuffer => {
     }
   }
 
-  return new Uint8Array(output).buffer;
+  return concatByteChunks(chunks, totalLength);
 };
 
 const updateWebpVp8xFlags = (chunk: Uint8Array, removedMetadata: string[]): Uint8Array => {
