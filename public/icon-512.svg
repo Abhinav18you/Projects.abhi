@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="Ghost Drop icon">
+  <rect width="512" height="512" rx="64" fill="#000000" />
+  <path d="M104 328V184h44v144h-44zm74 0V222h44v106h-44zm74 0V152h44v176h-44zm74 0V258h44v70h-44z" fill="#39ff14"/>
+  <text x="256" y="420" text-anchor="middle" font-family="monospace" font-size="64" fill="#39ff14">Ghost Drop</text>
+</svg>
