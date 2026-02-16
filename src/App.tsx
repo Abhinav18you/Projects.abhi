@@ -1,7 +1,8 @@
 import { Route, Switch } from "wouter";
 import { DashboardLayout } from "./layouts/DashboardLayout";
 import { Incinerator } from "./views/Incinerator";
-import { DeadDrop } from "./views/DeadDrop";
+import { BlackoutEngine } from "./views/BlackoutEngine";
+import { PhantomPayload } from "./views/PhantomPayload";
 import { Settings } from "./views/Settings";
 
 function App() {
@@ -9,7 +10,8 @@ function App() {
     <DashboardLayout>
       <Switch>
         <Route path="/" component={Incinerator} />
-        <Route path="/dead-drop" component={DeadDrop} />
+        <Route path="/blackout-engine" component={BlackoutEngine} />
+        <Route path="/phantom-payload" component={PhantomPayload} />
         <Route path="/settings" component={Settings} />
         <Route>
             <div className="flex h-full items-center justify-center text-zinc-500">
