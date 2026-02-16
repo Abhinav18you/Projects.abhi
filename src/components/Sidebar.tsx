@@ -1,4 +1,5 @@
 import { Link, useLocation } from "wouter";
+import { motion } from "framer-motion";
 import { cn } from "../utils/cn";
 
 // Navigation Icons
@@ -46,9 +47,13 @@ export const Sidebar = () => {
       {/* Logo Section */}
       <div className="flex h-20 items-center border-b border-zinc-800/70 px-6">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+          <motion.div 
+            className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+          >
             <GhostLogo />
-          </div>
+          </motion.div>
           <div>
             <span className="text-lg font-bold tracking-wider text-white block">GHOST DROP</span>
             <span className="text-[9px] text-emerald-500/80 font-mono">PRIVACY SHIELD</span>
@@ -65,21 +70,37 @@ export const Sidebar = () => {
               key={item.path}
               href={item.path}
               className={cn(
-                "group flex items-center gap-3 rounded-lg px-4 py-3 text-xs font-medium tracking-wide transition-all",
+                "group relative flex items-center gap-3 rounded-lg px-4 py-3 text-xs font-medium tracking-wide transition-all overflow-hidden",
                 isActive 
-                  ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.1)]" 
-                  : "hover:bg-zinc-900 hover:text-zinc-100 border border-transparent"
+                  ? "bg-[#00FF41]/10 text-emerald-400 border-l-4 border-l-[#00FF41] border-t border-r border-b border-emerald-500/20 shadow-[inset_0_0_20px_rgba(0,255,65,0.1)]" 
+                  : "hover:bg-zinc-900 hover:text-zinc-100 border-l-4 border-l-transparent border border-transparent"
               )}
             >
+              {/* Background glow for active state */}
+              {isActive && (
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-[#00FF41]/15 to-transparent"
+                  layoutId="nav-glow"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                />
+              )}
+              
               <span className={cn(
-                "transition-colors",
-                isActive ? "text-emerald-400" : "text-zinc-500 group-hover:text-zinc-300"
+                "relative z-10 transition-colors",
+                isActive ? "text-[#00FF41]" : "text-zinc-500 group-hover:text-zinc-300"
               )}>
                 {item.icon}
               </span>
-              {item.name}
+              <span className="relative z-10">{item.name}</span>
               {isActive && (
-                <span className="ml-auto h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+                <motion.span 
+                  className="ml-auto h-2 w-2 rounded-full bg-[#00FF41] shadow-[0_0_10px_rgba(0,255,65,0.8),0_0_20px_rgba(0,255,65,0.4)]"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 15 }}
+                />
               )}
             </Link>
           );
@@ -90,7 +111,11 @@ export const Sidebar = () => {
       <div className="absolute bottom-6 left-6 right-6">
         <div className="p-3 rounded-lg bg-zinc-900/50 border border-zinc-800/50">
           <div className="flex items-center gap-2 mb-2">
-            <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+            <motion.div 
+              className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"
+              animate={{ opacity: [1, 0.5, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            />
             <span className="text-[10px] text-emerald-500 font-mono">SECURE MODE ACTIVE</span>
           </div>
           <p className="text-[9px] text-zinc-600 font-mono">All processing runs locally.</p>
