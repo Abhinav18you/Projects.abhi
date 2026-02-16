@@ -90,7 +90,7 @@ export const DropZone = ({ onDrop }: { onDrop: (files: File[]) => void }) => {
           >
             <div className="relative h-16 w-16">
               <div className="absolute inset-0 animate-ping rounded-full bg-[#00FF41]/20" />
-              <div className="relative flex h-full w-full items-center justify-center rounded-full ring-2 ring-[#00FF41]/50 ring-t-[#00FF41] animate-spin" />
+              <div className="relative flex h-full w-full items-center justify-center rounded-full border-2 border-[#00FF41]/50 border-t-[#00FF41] animate-spin" />
             </div>
             <p className="mt-6 text-xs font-medium tracking-widest text-[#00FF41] animate-pulse">
               PROCESSING DATA...
