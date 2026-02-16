@@ -15,6 +15,18 @@ body {
   font-family: 'Courier Prime', 'Roboto Mono', 'JetBrains Mono', 'SFMono-Regular', ui-monospace, monospace;
 }
 
+/* Enhanced Glassmorphism Card Style */
+.glass-card {
+  @apply relative rounded-xl border border-zinc-800/70 bg-zinc-900/30 p-6 backdrop-blur-md shadow-lg;
+  background: rgba(24, 24, 27, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.glass-card-hover {
+  @apply transition-all hover:border-emerald-500/30 hover:bg-zinc-900/50;
+}
+
 .terminal-frame {
   box-shadow: 0 0 10px rgba(0, 255, 65, 0.3), inset 0 0 0 1px rgba(0, 255, 65, 0.06);
 }
@@ -43,6 +55,17 @@ body {
   border-right: 2px solid #00ff41;
   border-bottom: 2px solid #00ff41;
   border-bottom-right-radius: 12px;
+}
+
+/* Neon glow effect for active elements */
+.neon-glow {
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.3), 
+              0 0 40px rgba(16, 185, 129, 0.1);
+}
+
+.neon-text-glow {
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.5),
+               0 0 20px rgba(16, 185, 129, 0.3);
 }
 
 @layer utilities {

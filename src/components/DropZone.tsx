@@ -66,11 +66,14 @@ export const DropZone = ({ onDrop }: { onDrop: (files: File[]) => void }) => {
                 </svg>
               </div>
             </div>
-            <p className="text-sm font-bold tracking-widest text-zinc-300">
-              {isDragActive ? "RELEASE TO UPLOAD" : "DROP IMAGE TO INCINERATE"}
+            <p className="text-sm font-bold tracking-wide text-zinc-300">
+              {isDragActive ? "RELEASE TO BEGIN SANITIZATION" : "Drag & Drop image here to begin sanitization"}
             </p>
-            <p className="mt-2 text-[10px] text-zinc-600 font-mono">
-              JPG • PNG • WEBP
+            <p className="mt-2 text-[10px] text-zinc-500 font-mono">
+              Supported: JPG • PNG • WEBP
+            </p>
+            <p className="mt-1 text-[9px] text-zinc-600 font-mono">
+              100% local • No uploads • Zero tracking
             </p>
           </motion.div>
         )}
