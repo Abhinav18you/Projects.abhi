@@ -61,17 +61,17 @@ export const DeadDrop = () => (
         {/* Additional Info */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
             <div className="p-4 rounded-lg border border-zinc-800/50 bg-zinc-900/20 backdrop-blur-sm text-center">
-                <div className="text-emerald-400 text-lg font-bold mb-1">🔒</div>
+                <div className="text-emerald-400 text-lg font-bold mb-1" role="img" aria-label="Lock icon">🔒</div>
                 <h4 className="text-xs font-bold text-zinc-300 mb-1">End-to-End Encrypted</h4>
                 <p className="text-[10px] text-zinc-500">WebRTC with DTLS encryption</p>
             </div>
             <div className="p-4 rounded-lg border border-zinc-800/50 bg-zinc-900/20 backdrop-blur-sm text-center">
-                <div className="text-emerald-400 text-lg font-bold mb-1">⚡</div>
+                <div className="text-emerald-400 text-lg font-bold mb-1" role="img" aria-label="Lightning bolt icon">⚡</div>
                 <h4 className="text-xs font-bold text-zinc-300 mb-1">Direct Transfer</h4>
                 <p className="text-[10px] text-zinc-500">No intermediary servers</p>
             </div>
             <div className="p-4 rounded-lg border border-zinc-800/50 bg-zinc-900/20 backdrop-blur-sm text-center">
-                <div className="text-emerald-400 text-lg font-bold mb-1">💨</div>
+                <div className="text-emerald-400 text-lg font-bold mb-1" role="img" aria-label="Wind icon">💨</div>
                 <h4 className="text-xs font-bold text-zinc-300 mb-1">One-Time Links</h4>
                 <p className="text-[10px] text-zinc-500">Auto-expires after transfer</p>
             </div>

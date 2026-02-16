@@ -93,7 +93,7 @@ export const Incinerator = () => {
             {/* Hero Section - Value Proposition */}
             <header className="text-center space-y-4 mb-8">
                 <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
-                    Your Photos Are Spying On You.<br />
+                    <span className="block">Your Photos Are Spying On You.</span>
                     <span className="text-emerald-400">Stop Them.</span>
                 </h1>
                 <p className="text-sm md:text-base text-zinc-400 max-w-xl mx-auto leading-relaxed">

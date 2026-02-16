@@ -93,7 +93,8 @@ export const Sidebar = () => {
             <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
             <span className="text-[10px] text-emerald-500 font-mono">SECURE MODE ACTIVE</span>
           </div>
-          <p className="text-[9px] text-zinc-600 font-mono">All processing runs locally.<br/>No data leaves your browser.</p>
+          <p className="text-[9px] text-zinc-600 font-mono">All processing runs locally.</p>
+          <p className="text-[9px] text-zinc-600 font-mono">No data leaves your browser.</p>
         </div>
         <p className="text-[10px] text-zinc-600 mt-4 text-center">v2.0.0-beta</p>
       </div>
