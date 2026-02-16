@@ -259,15 +259,17 @@ export const BlackoutEngine = () => {
 
   // Pre-initialize the ML model when component mounts
   useEffect(() => {
-    initializeDetector().catch(() => {
-      // Error is already handled in the hook
+    // Error handling is done in the hook, but we catch here to prevent unhandled promise rejection
+    initializeDetector().catch((err) => {
+      console.error('Failed to initialize face detector:', err);
     });
   }, [initializeDetector]);
 
   const handleDrop = useCallback((files: File[]) => {
     if (files.length > 0) {
-      processImage(files[0]).catch(() => {
-        // Error is already handled in the hook
+      // Error handling is done in the hook, but we catch here to prevent unhandled promise rejection
+      processImage(files[0]).catch((err) => {
+        console.error('Failed to process image:', err);
       });
     }
   }, [processImage]);

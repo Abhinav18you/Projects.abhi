@@ -12,6 +12,10 @@ export interface BlackoutResult {
   finalSize: number;
 }
 
+// Constants for face detection and blur settings
+const FACE_PADDING_RATIO = 0.15;
+const FACE_BLUR_AMOUNT = 35;
+
 export const useBlackoutEngine = () => {
   const [status, setStatus] = useState<BlackoutStatus>('idle');
   const [result, setResult] = useState<BlackoutResult | null>(null);
@@ -62,7 +66,7 @@ export const useBlackoutEngine = () => {
     y: number,
     width: number,
     height: number,
-    blurAmount: number = 30
+    blurAmount: number = FACE_BLUR_AMOUNT
   ) => {
     // Save current context state
     ctx.save();
@@ -146,14 +150,14 @@ export const useBlackoutEngine = () => {
         for (const detection of detections.detections) {
           const bbox = detection.boundingBox;
           if (bbox) {
-            // Add some padding around the face for better coverage
-            const padding = Math.min(bbox.width, bbox.height) * 0.15;
+            // Add padding around the face for better coverage
+            const padding = Math.min(bbox.width, bbox.height) * FACE_PADDING_RATIO;
             const x = Math.max(0, bbox.originX - padding);
             const y = Math.max(0, bbox.originY - padding);
             const width = Math.min(canvas.width - x, bbox.width + padding * 2);
             const height = Math.min(canvas.height - y, bbox.height + padding * 2);
             
-            applyGaussianBlur(ctx, x, y, width, height, 35);
+            applyGaussianBlur(ctx, x, y, width, height);
           }
         }
         
@@ -200,7 +204,8 @@ export const useBlackoutEngine = () => {
   }, [initializeDetector]);
 
   const reset = useCallback(() => {
-    setStatus('idle');
+    // Set status to 'ready' if detector is already initialized, otherwise 'idle'
+    setStatus(isInitializedRef.current ? 'ready' : 'idle');
     setResult(null);
     setError(null);
   }, []);
