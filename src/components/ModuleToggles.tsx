@@ -1,6 +1,6 @@
 import { useAppStore } from "../store/useAppStore";
 import { cn } from "../utils/cn";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Icons for module cards
 const GhostIcon = () => (
@@ -33,25 +33,38 @@ const Toggle = ({
   description: string;
   icon: React.ReactNode;
 }) => (
-  <div
+  <motion.div
     onClick={onClick}
     className={cn(
-      "relative cursor-pointer select-none rounded-xl border bg-zinc-900/50 p-5 transition-all backdrop-blur-md",
+      "relative cursor-pointer select-none rounded-xl border bg-zinc-900/50 p-5 backdrop-blur-md overflow-hidden",
       active 
-        ? "border-emerald-500/60 bg-emerald-900/20 shadow-[0_0_20px_rgba(16,185,129,0.15)]" 
-        : "border-zinc-800/70 hover:border-zinc-700 hover:bg-zinc-900/70"
+        ? "border-emerald-500/60 bg-emerald-900/20" 
+        : "border-zinc-800/70"
     )}
+    whileHover={{ 
+      scale: 1.02,
+      y: -2,
+      borderColor: active ? "rgba(52, 211, 153, 0.6)" : "rgba(52, 211, 153, 0.3)",
+      boxShadow: active 
+        ? "0 0 30px rgba(52, 211, 153, 0.25), 0 0 60px rgba(52, 211, 153, 0.1)"
+        : "0 0 20px rgba(52, 211, 153, 0.1), 0 0 40px rgba(52, 211, 153, 0.05)"
+    }}
+    transition={{ type: "spring", stiffness: 400, damping: 15 }}
   >
     <div className="flex items-start gap-4">
       {/* Icon */}
-      <div className={cn(
-        "p-2.5 rounded-lg ring-1 flex-shrink-0 transition-colors",
-        active 
-          ? "bg-emerald-500/20 text-emerald-400 ring-emerald-500/40" 
-          : "bg-zinc-800/50 text-zinc-500 ring-zinc-700/50"
-      )}>
+      <motion.div 
+        className={cn(
+          "p-2.5 rounded-lg ring-1 flex-shrink-0 transition-colors",
+          active 
+            ? "bg-emerald-500/20 text-emerald-400 ring-emerald-500/40" 
+            : "bg-zinc-800/50 text-zinc-500 ring-zinc-700/50"
+        )}
+        whileHover={{ scale: 1.1 }}
+        transition={{ type: "spring", stiffness: 400, damping: 10 }}
+      >
         {icon}
-      </div>
+      </motion.div>
       
       {/* Content */}
       <div className="flex-1 min-w-0">
@@ -64,39 +77,47 @@ const Toggle = ({
           </div>
           
           {/* Toggle Switch */}
-          <div className={cn(
-            "relative w-12 h-6 rounded-full transition-all cursor-pointer flex-shrink-0",
-            active 
-              ? "bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.5)]" 
-              : "bg-zinc-700"
-          )}>
-            <div className={cn(
-              "absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-md transition-all duration-200",
-              active ? "left-6" : "left-0.5"
-            )} />
+          <motion.div 
+            className={cn(
+              "relative w-12 h-6 rounded-full cursor-pointer flex-shrink-0",
+              active 
+                ? "bg-emerald-500" 
+                : "bg-zinc-700"
+            )}
+            animate={{
+              boxShadow: active ? "0 0 15px rgba(52, 211, 153, 0.5)" : "none"
+            }}
+          >
+            <motion.div 
+              className="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-md"
+              animate={{ left: active ? 26 : 2 }}
+              transition={{ type: "spring", stiffness: 500, damping: 30 }}
+            />
             <span className={cn(
               "absolute text-[8px] font-bold top-1/2 -translate-y-1/2 transition-all",
               active ? "left-1.5 text-emerald-900" : "right-1 text-zinc-400"
             )}>
               {active ? "ON" : "OFF"}
             </span>
-          </div>
+          </motion.div>
         </div>
         
         <p className="mt-2 text-xs leading-relaxed text-zinc-400">{description}</p>
       </div>
     </div>
 
-    {active && (
-      <motion.div
-        layoutId="active-glow"
-        className="absolute inset-0 -z-10 rounded-xl bg-emerald-500/5 blur-xl"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-      />
-    )}
-  </div>
+    <AnimatePresence>
+      {active && (
+        <motion.div
+          className="absolute inset-0 -z-10 bg-emerald-500/5"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        />
+      )}
+    </AnimatePresence>
+  </motion.div>
 );
 
 export const ModuleToggles = () => {

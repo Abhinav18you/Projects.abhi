@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { motion } from "framer-motion";
 import { cn } from "../utils/cn";
 
 export const BentoGrid = ({ children, className }: { children: ReactNode; className?: string }) => {
@@ -21,14 +22,22 @@ export const BentoItem = ({
   rowSpan?: 1 | 2;
 }) => {
     return (
-        <div className={cn(
-            "relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/40 p-6 backdrop-blur-sm transition-all hover:border-zinc-700",
-            colSpan === 2 && "md:col-span-2",
-            colSpan === 3 && "md:col-span-3",
-            rowSpan === 2 && "row-span-2",
-            className
-        )}>
+        <motion.div 
+            className={cn(
+                "relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/40 p-6 backdrop-blur-sm transition-colors",
+                colSpan === 2 && "md:col-span-2",
+                colSpan === 3 && "md:col-span-3",
+                rowSpan === 2 && "row-span-2",
+                className
+            )}
+            whileHover={{ 
+                scale: 1.02,
+                borderColor: "rgba(52, 211, 153, 0.4)",
+                boxShadow: "0 0 25px rgba(52, 211, 153, 0.15), 0 0 50px rgba(52, 211, 153, 0.05)"
+            }}
+            transition={{ type: "spring", stiffness: 400, damping: 15 }}
+        >
             {children}
-        </div>
+        </motion.div>
     );
 }
