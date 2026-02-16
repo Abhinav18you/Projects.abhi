@@ -144,9 +144,9 @@ export const DeadDropView = () => {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
              </motion.div>
              <div>
-                <h3 className="text-xl font-bold text-white">Secure Receiver Mode</h3>
+                <h3 className="text-xl font-bold text-white">SECURE RECEIVER MODE</h3>
                 <p className="text-xs text-zinc-500 font-mono mt-1">
-                    {connection ? "Connected to sender" : "Establishing encrypted tunnel..."}
+                    {connection ? "CONNECTED TO SENDER" : "ESTABLISHING ENCRYPTED TUNNEL..."}
                 </p>
              </div>
 
@@ -174,7 +174,7 @@ export const DeadDropView = () => {
                          exit={{ opacity: 0 }}
                      >
                          <RadarPulse />
-                         <p className="text-zinc-500 text-xs mt-4">Searching for signal...</p>
+                         <p className="text-zinc-500 text-xs mt-4">SEARCHING FOR SIGNAL...</p>
                      </motion.div>
                  )}
              </AnimatePresence>
@@ -195,7 +195,7 @@ export const DeadDropView = () => {
                          >
                              🎉
                          </motion.div>
-                         <p className="text-white font-bold mb-2">Payload Received!</p>
+                         <p className="text-white font-bold mb-2">PAYLOAD RECEIVED</p>
                          <p className="text-xs text-zinc-400 mb-4 font-mono">{incomingFile.name}</p>
                          <motion.button
                             onClick={handleDownloadIncoming}
@@ -203,7 +203,7 @@ export const DeadDropView = () => {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                          >
-                             Download File
+                             DOWNLOAD FILE
                          </motion.button>
                      </motion.div>
                  )}
@@ -228,8 +228,8 @@ export const DeadDropView = () => {
                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-zinc-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" x2="6.01" y1="6" y2="6"/><line x1="6" x2="6.01" y1="18" y2="18"/></svg>
               </motion.div>
               <div>
-                <p className="text-zinc-400 text-sm font-medium">No File Ready for Transmission</p>
-                <p className="text-zinc-600 text-xs mt-1">Process a file in the Incinerator first to enable Dead Drop</p>
+                <p className="text-zinc-400 text-sm font-medium">NO FILE READY FOR TRANSMISSION</p>
+                <p className="text-zinc-600 text-xs mt-1">PROCESS A FILE IN THE INCINERATOR FIRST TO ENABLE DEAD DROP</p>
               </div>
           </motion.div>
       );

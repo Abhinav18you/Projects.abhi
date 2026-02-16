@@ -3,9 +3,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAppStore } from "../store/useAppStore";
 
 // Individual log line with typing effect
-const TerminalLine = ({ log, index }: { log: string; index: number }) => {
+const TerminalLine = ({ log }: { log: string }) => {
   const [displayedText, setDisplayedText] = useState("");
   const [isComplete, setIsComplete] = useState(false);
+  const timeoutRef = useRef<number | null>(null);
   
   useEffect(() => {
     let currentIndex = 0;
@@ -15,17 +16,21 @@ const TerminalLine = ({ log, index }: { log: string; index: number }) => {
       if (currentIndex < log.length) {
         setDisplayedText(log.slice(0, currentIndex + 1));
         currentIndex++;
-        setTimeout(typeChar, typingSpeed);
+        timeoutRef.current = window.setTimeout(typeChar, typingSpeed);
       } else {
         setIsComplete(true);
       }
     };
     
-    // Start typing with a small delay based on index
-    const startDelay = setTimeout(typeChar, index * 50);
+    // Start typing immediately
+    typeChar();
     
-    return () => clearTimeout(startDelay);
-  }, [log, index]);
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [log]);
 
   return (
     <motion.div 
@@ -109,7 +114,7 @@ export const Terminal = () => {
           )}
         </AnimatePresence>
         {renderedLogs.map((log, i) => (
-          <TerminalLine key={`${i}-${log}`} log={log} index={0} />
+          <TerminalLine key={`${i}-${log}`} log={log} />
         ))}
         <div ref={bottomRef} />
       </div>
