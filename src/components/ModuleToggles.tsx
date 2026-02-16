@@ -36,20 +36,16 @@ const Toggle = ({
   <motion.div
     onClick={onClick}
     className={cn(
-      "relative cursor-pointer select-none rounded-xl border bg-zinc-900/50 p-5 backdrop-blur-md overflow-hidden",
+      "relative cursor-pointer select-none rounded-xl bg-white/[0.02] p-5 backdrop-blur-xl overflow-hidden ring-1 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]",
       active 
-        ? "border-emerald-500/60 bg-emerald-900/20" 
-        : "border-zinc-800/70"
+        ? "ring-[#00FF41]/60 bg-[#00FF41]/10" 
+        : "ring-white/10"
     )}
     whileHover={{ 
       scale: 1.02,
       y: -2,
-      borderColor: active ? "rgba(52, 211, 153, 0.6)" : "rgba(52, 211, 153, 0.3)",
-      boxShadow: active 
-        ? "0 0 30px rgba(52, 211, 153, 0.25), 0 0 60px rgba(52, 211, 153, 0.1)"
-        : "0 0 20px rgba(52, 211, 153, 0.1), 0 0 40px rgba(52, 211, 153, 0.05)"
     }}
-    transition={{ type: "spring", stiffness: 400, damping: 15 }}
+    transition={{ type: "spring", stiffness: 400, damping: 20 }}
   >
     <div className="flex items-start gap-4">
       {/* Icon */}
@@ -57,11 +53,11 @@ const Toggle = ({
         className={cn(
           "p-2.5 rounded-lg ring-1 flex-shrink-0 transition-colors",
           active 
-            ? "bg-emerald-500/20 text-emerald-400 ring-emerald-500/40" 
-            : "bg-zinc-800/50 text-zinc-500 ring-zinc-700/50"
+            ? "bg-[#00FF41]/20 text-[#00FF41] ring-[#00FF41]/40" 
+            : "bg-white/[0.04] text-white/50 ring-white/10"
         )}
         whileHover={{ scale: 1.1 }}
-        transition={{ type: "spring", stiffness: 400, damping: 10 }}
+        transition={{ type: "spring", stiffness: 400, damping: 15 }}
       >
         {icon}
       </motion.div>
@@ -70,10 +66,10 @@ const Toggle = ({
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-1">
           <div>
-            <h3 className={cn("text-sm font-bold tracking-wide", active ? "text-emerald-400" : "text-zinc-300")}>
+            <h3 className={cn("text-sm font-medium tracking-tight", active ? "text-[#00FF41]" : "text-white/70")}>
               {label}
             </h3>
-            <span className="text-[10px] text-zinc-500 font-mono">{subtitle}</span>
+            <span className="text-[10px] text-white/40 font-mono">{subtitle}</span>
           </div>
           
           {/* Toggle Switch */}
@@ -81,11 +77,11 @@ const Toggle = ({
             className={cn(
               "relative w-12 h-6 rounded-full cursor-pointer flex-shrink-0",
               active 
-                ? "bg-emerald-500" 
-                : "bg-zinc-700"
+                ? "bg-[#00FF41]" 
+                : "bg-white/10"
             )}
             animate={{
-              boxShadow: active ? "0 0 15px rgba(52, 211, 153, 0.5)" : "none"
+              boxShadow: active ? "0 0 15px rgba(0, 255, 65, 0.5)" : "none"
             }}
           >
             <motion.div 
@@ -94,22 +90,22 @@ const Toggle = ({
               transition={{ type: "spring", stiffness: 500, damping: 30 }}
             />
             <span className={cn(
-              "absolute text-[8px] font-bold top-1/2 -translate-y-1/2 transition-all",
-              active ? "left-1.5 text-emerald-900" : "right-1 text-zinc-400"
+              "absolute text-[8px] font-medium top-1/2 -translate-y-1/2 transition-all",
+              active ? "left-1.5 text-black" : "right-1 text-white/40"
             )}>
               {active ? "ON" : "OFF"}
             </span>
           </motion.div>
         </div>
         
-        <p className="mt-2 text-xs leading-relaxed text-zinc-400">{description}</p>
+        <p className="mt-2 text-xs leading-relaxed text-white/50">{description}</p>
       </div>
     </div>
 
     <AnimatePresence>
       {active && (
         <motion.div
-          className="absolute inset-0 -z-10 bg-emerald-500/5"
+          className="absolute inset-0 -z-10 bg-[#00FF41]/5"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

@@ -3,14 +3,14 @@ import { motion, Variants } from "framer-motion";
 import { Sidebar } from "../components/Sidebar";
 import { Terminal } from "../components/Terminal";
 
-// Animation variants for staggered entrance
+// Premium spring animation variants
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.1,
+      staggerChildren: 0.12,
+      delayChildren: 0.08,
     },
   },
 };
@@ -20,7 +20,7 @@ const sidebarVariants: Variants = {
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] },
+    transition: { type: "spring", stiffness: 300, damping: 30 },
   },
 };
 
@@ -29,7 +29,7 @@ const mainVariants: Variants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] },
+    transition: { type: "spring", stiffness: 300, damping: 30 },
   },
 };
 
@@ -38,18 +38,28 @@ const terminalVariants: Variants = {
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] },
+    transition: { type: "spring", stiffness: 300, damping: 30 },
   },
 };
 
 export const DashboardLayout = ({ children }: { children: ReactNode }) => {
   return (
     <motion.div 
-      className="flex h-screen w-full overflow-hidden bg-black text-zinc-100 font-sans selection:bg-emerald-500/30"
+      className="relative flex h-screen w-full overflow-hidden bg-black text-white/90 font-sans selection:bg-emerald-500/30"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
+      {/* Premium Background Glow - Massive blurred radial gradient */}
+      <div 
+        className="fixed inset-0 pointer-events-none z-0"
+        aria-hidden="true"
+      >
+        <div 
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#00FF41]/5 rounded-full blur-[120px]"
+        />
+      </div>
+
       {/* Left Sidebar */}
       <motion.div variants={sidebarVariants}>
         <Sidebar />
@@ -67,7 +77,7 @@ export const DashboardLayout = ({ children }: { children: ReactNode }) => {
 
       {/* Right Terminal Panel */}
       <motion.aside 
-        className="fixed right-0 top-0 h-full w-80 bg-black/95 border-l border-zinc-800/50 z-20"
+        className="fixed right-0 top-0 h-full w-80 bg-black/80 backdrop-blur-xl ring-1 ring-white/10 z-20 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]"
         variants={terminalVariants}
       >
         <Terminal />

@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { motion } from "framer-motion";
 import { DropZone } from "../components/DropZone";
 import { ModuleToggles } from "../components/ModuleToggles";
 import { useAppStore } from "../store/useAppStore";
@@ -92,11 +93,11 @@ export const Incinerator = () => {
         <div className="space-y-8 py-6">
             {/* Hero Section - Value Proposition */}
             <header className="text-center space-y-4 mb-8">
-                <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
+                <h1 className="text-3xl md:text-4xl font-medium tracking-tight text-white/90 leading-tight">
                     <span className="block">Your Photos Are Spying On You.</span>
-                    <span className="text-emerald-400">Stop Them.</span>
+                    <span className="text-[#00FF41]">Stop Them.</span>
                 </h1>
-                <p className="text-sm md:text-base text-zinc-400 max-w-xl mx-auto leading-relaxed">
+                <p className="text-sm md:text-base text-white/50 max-w-xl mx-auto leading-relaxed">
                     Ghost Drop is a client-side privacy shield. We strip hidden metadata, 
                     spoof your location, and break tracking hashes before you share.
                 </p>
@@ -105,43 +106,50 @@ export const Incinerator = () => {
             {/* How It Works - 3-Step Diagram */}
             <section className="mb-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                    <div className="flex flex-col items-center text-center p-6 rounded-xl border border-zinc-800/50 bg-zinc-900/30 backdrop-blur-md transition-all hover:border-emerald-500/30 hover:bg-zinc-900/50">
-                        <div className="mb-4 p-3 rounded-full bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30">
-                            <DragIcon />
-                        </div>
-                        <span className="text-emerald-500 text-xs font-bold mb-2">STEP 1</span>
-                        <h3 className="text-white font-bold text-sm mb-1">Drop Image</h3>
-                        <p className="text-zinc-500 text-xs">Runs locally in your browser</p>
-                    </div>
-                    <div className="flex flex-col items-center text-center p-6 rounded-xl border border-zinc-800/50 bg-zinc-900/30 backdrop-blur-md transition-all hover:border-emerald-500/30 hover:bg-zinc-900/50">
-                        <div className="mb-4 p-3 rounded-full bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30">
-                            <ShieldIcon />
-                        </div>
-                        <span className="text-emerald-500 text-xs font-bold mb-2">STEP 2</span>
-                        <h3 className="text-white font-bold text-sm mb-1">Incinerate & Spoof</h3>
-                        <p className="text-zinc-500 text-xs">Apply privacy layers</p>
-                    </div>
-                    <div className="flex flex-col items-center text-center p-6 rounded-xl border border-zinc-800/50 bg-zinc-900/30 backdrop-blur-md transition-all hover:border-emerald-500/30 hover:bg-zinc-900/50">
-                        <div className="mb-4 p-3 rounded-full bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30">
-                            <DownloadIcon />
-                        </div>
-                        <span className="text-emerald-500 text-xs font-bold mb-2">STEP 3</span>
-                        <h3 className="text-white font-bold text-sm mb-1">Share Freely</h3>
-                        <p className="text-zinc-500 text-xs">Untraceable file</p>
-                    </div>
+                    {[
+                        { icon: <DragIcon />, step: "STEP 1", title: "Drop Image", desc: "Runs locally in your browser" },
+                        { icon: <ShieldIcon />, step: "STEP 2", title: "Incinerate & Spoof", desc: "Apply privacy layers" },
+                        { icon: <DownloadIcon />, step: "STEP 3", title: "Share Freely", desc: "Untraceable file" },
+                    ].map((item, i) => (
+                        <motion.div 
+                            key={i}
+                            className="flex flex-col items-center text-center p-6 rounded-xl bg-white/[0.02] backdrop-blur-xl ring-1 ring-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] transition-all hover:bg-white/[0.04] hover:ring-[#00FF41]/30"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ type: "spring", stiffness: 300, damping: 30, delay: i * 0.1 }}
+                            whileHover={{ scale: 1.02, y: -2 }}
+                        >
+                            <div className="mb-4 p-3 rounded-full bg-[#00FF41]/10 text-[#00FF41] ring-1 ring-[#00FF41]/30">
+                                {item.icon}
+                            </div>
+                            <span className="text-[#00FF41] text-xs font-medium mb-2">{item.step}</span>
+                            <h3 className="text-white/90 font-medium text-sm mb-1 tracking-tight">{item.title}</h3>
+                            <p className="text-white/50 text-xs">{item.desc}</p>
+                        </motion.div>
+                    ))}
                 </div>
             </section>
 
             {/* Drop Zone */}
-            <section className="rounded-xl border border-zinc-800/70 bg-zinc-900/20 backdrop-blur-md p-1 shadow-lg">
+            <motion.section 
+                className="rounded-xl bg-white/[0.02] backdrop-blur-xl ring-1 ring-white/10 p-1 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30, delay: 0.3 }}
+            >
                 <DropZone onDrop={handleDrop} />
-            </section>
+            </motion.section>
 
             {/* Module Toggles Section */}
-            <section className="rounded-xl border border-zinc-800/70 bg-zinc-900/20 backdrop-blur-md p-6 shadow-lg mt-8">
-                <h3 className="mb-6 text-xs font-bold tracking-wider text-zinc-400 uppercase">Privacy Modules</h3>
+            <motion.section 
+                className="rounded-xl bg-white/[0.02] backdrop-blur-xl ring-1 ring-white/10 p-6 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] mt-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30, delay: 0.4 }}
+            >
+                <h3 className="mb-6 text-xs font-medium tracking-wider text-white/50 uppercase">Privacy Modules</h3>
                 <ModuleToggles />
-            </section>
+            </motion.section>
         </div>
     );
 };
