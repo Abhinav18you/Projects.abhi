@@ -43,20 +43,20 @@ export const Sidebar = () => {
   ];
 
   return (
-    <aside className="fixed left-0 top-0 h-full w-64 border-r border-zinc-800/70 bg-black/95 text-zinc-400 backdrop-blur-md z-20">
+    <aside className="fixed left-0 top-0 h-full w-64 bg-white/[0.02] backdrop-blur-xl ring-1 ring-white/10 text-white/50 z-20 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]">
       {/* Logo Section */}
-      <div className="flex h-20 items-center border-b border-zinc-800/70 px-6">
+      <div className="flex h-20 items-center border-b border-white/10 px-6">
         <div className="flex items-center gap-3">
           <motion.div 
-            className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
+            className="p-2 rounded-lg bg-[#00FF41]/10 text-[#00FF41] ring-1 ring-[#00FF41]/30 shadow-[0_0_15px_rgba(0,255,65,0.2)]"
             whileHover={{ scale: 1.05 }}
-            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            transition={{ type: "spring", stiffness: 400, damping: 15 }}
           >
             <GhostLogo />
           </motion.div>
           <div>
-            <span className="text-lg font-bold tracking-wider text-white block">GHOST DROP</span>
-            <span className="text-[9px] text-emerald-500/80 font-mono">PRIVACY SHIELD</span>
+            <span className="text-lg font-medium tracking-tight text-white/90 block">GHOST DROP</span>
+            <span className="text-[9px] text-[#00FF41]/80 font-mono">PRIVACY SHIELD</span>
           </div>
         </div>
       </div>
@@ -72,8 +72,8 @@ export const Sidebar = () => {
               className={cn(
                 "group relative flex items-center gap-3 rounded-lg px-4 py-3 text-xs font-medium tracking-wide transition-all overflow-hidden",
                 isActive 
-                  ? "bg-[#00FF41]/10 text-emerald-400 border-l-4 border-l-[#00FF41] border-t border-r border-b border-emerald-500/20 shadow-[inset_0_0_20px_rgba(0,255,65,0.1)]" 
-                  : "hover:bg-zinc-900 hover:text-zinc-100 border-l-4 border-l-transparent border border-transparent"
+                  ? "bg-[#00FF41]/10 text-[#00FF41] ring-1 ring-[#00FF41]/30 shadow-[inset_0_0_20px_rgba(0,255,65,0.1)]" 
+                  : "hover:bg-white/[0.04] hover:text-white/90 ring-1 ring-transparent hover:ring-white/10"
               )}
             >
               {/* Background glow for active state */}
@@ -83,13 +83,13 @@ export const Sidebar = () => {
                   layoutId="nav-glow"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 />
               )}
               
               <span className={cn(
                 "relative z-10 transition-colors",
-                isActive ? "text-[#00FF41]" : "text-zinc-500 group-hover:text-zinc-300"
+                isActive ? "text-[#00FF41]" : "text-white/50 group-hover:text-white/70"
               )}>
                 {item.icon}
               </span>
@@ -109,19 +109,19 @@ export const Sidebar = () => {
 
       {/* Footer */}
       <div className="absolute bottom-6 left-6 right-6">
-        <div className="p-3 rounded-lg bg-zinc-900/50 border border-zinc-800/50">
+        <div className="p-3 rounded-lg bg-white/[0.02] ring-1 ring-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]">
           <div className="flex items-center gap-2 mb-2">
             <motion.div 
-              className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"
+              className="h-2 w-2 rounded-full bg-[#00FF41] shadow-[0_0_8px_rgba(0,255,65,0.8)]"
               animate={{ opacity: [1, 0.5, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             />
-            <span className="text-[10px] text-emerald-500 font-mono">SECURE MODE ACTIVE</span>
+            <span className="text-[10px] text-[#00FF41] font-mono">SECURE MODE ACTIVE</span>
           </div>
-          <p className="text-[9px] text-zinc-600 font-mono">All processing runs locally.</p>
-          <p className="text-[9px] text-zinc-600 font-mono">No data leaves your browser.</p>
+          <p className="text-[9px] text-white/30 font-mono">All processing runs locally.</p>
+          <p className="text-[9px] text-white/30 font-mono">No data leaves your browser.</p>
         </div>
-        <p className="text-[10px] text-zinc-600 mt-4 text-center">v2.0.0-beta</p>
+        <p className="text-[10px] text-white/30 mt-4 text-center">v2.0.0-beta</p>
       </div>
     </aside>
   );
