@@ -23,6 +23,7 @@ export const useBlackoutEngine = () => {
   const [error, setError] = useState<string | null>(null);
   const faceDetectorRef = useRef<FaceDetector | null>(null);
   const isInitializedRef = useRef(false);
+  const previewUrlRef = useRef<string | null>(null);
 
   const initializeDetector = useCallback(async () => {
     if (isInitializedRef.current && faceDetectorRef.current) {
@@ -192,6 +193,8 @@ export const useBlackoutEngine = () => {
 
       // Create preview URL from the blob for UI display
       const previewUrl = URL.createObjectURL(blob);
+      // Store previewUrl in ref for cleanup during reset
+      previewUrlRef.current = previewUrl;
 
       // Clean up original image URL
       URL.revokeObjectURL(imageUrl);
@@ -220,15 +223,16 @@ export const useBlackoutEngine = () => {
   }, [initializeDetector]);
 
   const reset = useCallback(() => {
-    // Clean up preview URL if it exists
-    if (result?.previewUrl) {
-      URL.revokeObjectURL(result.previewUrl);
+    // Clean up preview URL if it exists (using ref to avoid dependency on result)
+    if (previewUrlRef.current) {
+      URL.revokeObjectURL(previewUrlRef.current);
+      previewUrlRef.current = null;
     }
     // Set status to 'ready' if detector is already initialized, otherwise 'idle'
     setStatus(isInitializedRef.current ? 'ready' : 'idle');
     setResult(null);
     setError(null);
-  }, [result]);
+  }, []);
 
   return {
     status,

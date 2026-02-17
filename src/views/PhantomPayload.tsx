@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDropzone } from 'react-dropzone';
 import { useSteganography } from '../hooks/useSteganography';
-import { useSteganalysis } from '../hooks/useSteganalysis';
+import { useSteganalysis, ANOMALY_THRESHOLD } from '../hooks/useSteganalysis';
 import { cn } from '../utils/cn';
 
 type TabType = 'hide' | 'extract' | 'xray';
@@ -633,7 +633,7 @@ const XRayTab = ({ status, result, error, onProcess, onReset }: XRayTabProps) =>
                 <h3 className="text-xl font-medium tracking-tight text-white/90">LSB BIT-PLANE</h3>
                 
                 {/* Verdict Badge */}
-                {result.anomalyScore < 5 ? (
+                {result.anomalyScore < ANOMALY_THRESHOLD ? (
                   <motion.div 
                     className="mt-4 mb-2"
                     initial={{ opacity: 0, scale: 0.9 }}

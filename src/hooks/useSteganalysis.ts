@@ -3,6 +3,9 @@ import { logToTerminal } from '../utils/log';
 
 type SteganalysisStatus = 'idle' | 'processing' | 'done' | 'error';
 
+// Threshold for determining if anomaly is significant (percentage)
+export const ANOMALY_THRESHOLD = 5;
+
 interface SteganalysisResult {
   imageUrl: string;
   width: number;
@@ -98,7 +101,7 @@ export const useSteganalysis = () => {
 
       logToTerminal(`ANOMALY SCORE: ${anomalyScore.toFixed(2)}%`);
 
-      if (anomalyScore >= 5) {
+      if (anomalyScore >= ANOMALY_THRESHOLD) {
         logToTerminal('> VERDICT: ANOMALY DETECTED. HIDDEN DATA LIKELY.');
       } else {
         logToTerminal('> VERDICT: NO HIDDEN DATA FOUND.');
