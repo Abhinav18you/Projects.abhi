@@ -98,12 +98,10 @@ export const useSteganalysis = () => {
 
       logToTerminal(`ANOMALY SCORE: ${anomalyScore.toFixed(2)}%`);
 
-      if (anomalyScore > 15) {
-        logToTerminal('WARNING: HIGH ANOMALY DETECTED - POSSIBLE HIDDEN DATA');
-      } else if (anomalyScore > 5) {
-        logToTerminal('NOTICE: MODERATE ANOMALY DETECTED');
+      if (anomalyScore >= 5) {
+        logToTerminal('> VERDICT: ANOMALY DETECTED. HIDDEN DATA LIKELY.');
       } else {
-        logToTerminal('LSB LAYER APPEARS NATURAL (LOW ANOMALY)');
+        logToTerminal('> VERDICT: NO HIDDEN DATA FOUND.');
       }
 
       // Put visualization data on canvas
