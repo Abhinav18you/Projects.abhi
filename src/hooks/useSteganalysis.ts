@@ -31,11 +31,11 @@ export const useSteganalysis = () => {
       const bitmap = await createImageBitmap(imageFile);
       logToTerminal(`IMAGE LOADED: ${bitmap.width}x${bitmap.height} PIXELS`);
 
-      // Create off-screen canvas for source image
+      // Create off-screen canvas for source image with willReadFrequently for LSB analysis
       const sourceCanvas = document.createElement('canvas');
       sourceCanvas.width = bitmap.width;
       sourceCanvas.height = bitmap.height;
-      const sourceCtx = sourceCanvas.getContext('2d');
+      const sourceCtx = sourceCanvas.getContext('2d', { willReadFrequently: true });
 
       if (!sourceCtx) {
         throw new Error('Failed to get source canvas context');

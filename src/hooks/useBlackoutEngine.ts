@@ -64,52 +64,20 @@ export const useBlackoutEngine = () => {
 
   const applyGaussianBlur = (
     ctx: CanvasRenderingContext2D,
+    originalImage: HTMLImageElement,
     x: number,
     y: number,
     width: number,
     height: number,
     blurAmount: number = FACE_BLUR_AMOUNT
   ) => {
-    // Save current context state
+    // Standard bulletproof Canvas clipping method for face blur
     ctx.save();
-    
-    // Create a temporary canvas for the face region
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = width;
-    tempCanvas.height = height;
-    const tempCtx = tempCanvas.getContext('2d');
-    
-    if (!tempCtx) {
-      ctx.restore();
-      return;
-    }
-    
-    // Copy the face region to temp canvas
-    tempCtx.drawImage(
-      ctx.canvas,
-      x, y, width, height,
-      0, 0, width, height
-    );
-    
-    // Create another temp canvas to apply the blur
-    const blurCanvas = document.createElement('canvas');
-    blurCanvas.width = width;
-    blurCanvas.height = height;
-    const blurCtx = blurCanvas.getContext('2d');
-    
-    if (!blurCtx) {
-      ctx.restore();
-      return;
-    }
-    
-    // Apply blur filter and draw to blur canvas
-    blurCtx.filter = `blur(${blurAmount}px)`;
-    blurCtx.drawImage(tempCanvas, 0, 0, width, height);
-    
-    // Draw the blurred region back to the main canvas (no filter on main ctx)
-    ctx.drawImage(blurCanvas, x, y, width, height);
-    
-    // Restore context
+    ctx.beginPath();
+    ctx.rect(x, y, width, height);
+    ctx.clip();
+    ctx.filter = `blur(${blurAmount}px)`;
+    ctx.drawImage(originalImage, 0, 0);
     ctx.restore();
   };
 
@@ -170,7 +138,7 @@ export const useBlackoutEngine = () => {
             const width = Math.min(canvas.width - x, bbox.width + padding * 2);
             const height = Math.min(canvas.height - y, bbox.height + padding * 2);
             
-            applyGaussianBlur(ctx, x, y, width, height);
+            applyGaussianBlur(ctx, img, x, y, width, height);
           }
         }
         

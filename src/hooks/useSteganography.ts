@@ -53,11 +53,11 @@ export const useSteganography = () => {
       const bitmap = await createImageBitmap(imageFile);
       logToTerminal(`IMAGE LOADED: ${bitmap.width}x${bitmap.height} PIXELS`);
 
-      // Create off-screen canvas
+      // Create off-screen canvas with willReadFrequently for LSB operations
       const canvas = document.createElement('canvas');
       canvas.width = bitmap.width;
       canvas.height = bitmap.height;
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
       if (!ctx) {
         throw new Error('Failed to get canvas context');
@@ -154,11 +154,11 @@ export const useSteganography = () => {
       const bitmap = await createImageBitmap(imageFile);
       logToTerminal(`IMAGE LOADED: ${bitmap.width}x${bitmap.height} PIXELS`);
 
-      // Create off-screen canvas
+      // Create off-screen canvas with willReadFrequently for LSB operations
       const canvas = document.createElement('canvas');
       canvas.width = bitmap.width;
       canvas.height = bitmap.height;
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
       if (!ctx) {
         throw new Error('Failed to get canvas context');
