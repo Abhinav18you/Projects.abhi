@@ -3,6 +3,9 @@ import { logToTerminal } from '../utils/log';
 
 type SteganalysisStatus = 'idle' | 'processing' | 'done' | 'error';
 
+// Threshold for determining if anomaly is significant (percentage)
+export const ANOMALY_THRESHOLD = 5;
+
 interface SteganalysisResult {
   imageUrl: string;
   width: number;
@@ -98,12 +101,10 @@ export const useSteganalysis = () => {
 
       logToTerminal(`ANOMALY SCORE: ${anomalyScore.toFixed(2)}%`);
 
-      if (anomalyScore > 15) {
-        logToTerminal('WARNING: HIGH ANOMALY DETECTED - POSSIBLE HIDDEN DATA');
-      } else if (anomalyScore > 5) {
-        logToTerminal('NOTICE: MODERATE ANOMALY DETECTED');
+      if (anomalyScore >= ANOMALY_THRESHOLD) {
+        logToTerminal('> VERDICT: ANOMALY DETECTED. HIDDEN DATA LIKELY.');
       } else {
-        logToTerminal('LSB LAYER APPEARS NATURAL (LOW ANOMALY)');
+        logToTerminal('> VERDICT: NO HIDDEN DATA FOUND.');
       }
 
       // Put visualization data on canvas

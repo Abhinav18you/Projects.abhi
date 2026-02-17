@@ -6,6 +6,7 @@ export type BlackoutStatus = 'idle' | 'loading' | 'ready' | 'processing' | 'done
 
 export interface BlackoutResult {
   blob: Blob;
+  previewUrl: string;
   fileName: string;
   facesDetected: number;
   originalSize: number;
@@ -22,6 +23,7 @@ export const useBlackoutEngine = () => {
   const [error, setError] = useState<string | null>(null);
   const faceDetectorRef = useRef<FaceDetector | null>(null);
   const isInitializedRef = useRef(false);
+  const previewUrlRef = useRef<string | null>(null);
 
   const initializeDetector = useCallback(async () => {
     if (isInitializedRef.current && faceDetectorRef.current) {
@@ -89,12 +91,23 @@ export const useBlackoutEngine = () => {
       0, 0, width, height
     );
     
-    // Apply multiple blur passes for heavy Gaussian effect
-    ctx.filter = `blur(${blurAmount}px)`;
+    // Create another temp canvas to apply the blur
+    const blurCanvas = document.createElement('canvas');
+    blurCanvas.width = width;
+    blurCanvas.height = height;
+    const blurCtx = blurCanvas.getContext('2d');
     
-    // Clear the face region and redraw with blur
-    ctx.clearRect(x, y, width, height);
-    ctx.drawImage(tempCanvas, x, y, width, height);
+    if (!blurCtx) {
+      ctx.restore();
+      return;
+    }
+    
+    // Apply blur filter and draw to blur canvas
+    blurCtx.filter = `blur(${blurAmount}px)`;
+    blurCtx.drawImage(tempCanvas, 0, 0, width, height);
+    
+    // Draw the blurred region back to the main canvas (no filter on main ctx)
+    ctx.drawImage(blurCanvas, x, y, width, height);
     
     // Restore context
     ctx.restore();
@@ -178,11 +191,17 @@ export const useBlackoutEngine = () => {
         );
       });
 
-      // Clean up
+      // Create preview URL from the blob for UI display
+      const previewUrl = URL.createObjectURL(blob);
+      // Store previewUrl in ref for cleanup during reset
+      previewUrlRef.current = previewUrl;
+
+      // Clean up original image URL
       URL.revokeObjectURL(imageUrl);
 
       const resultData: BlackoutResult = {
         blob,
+        previewUrl,
         fileName: `redacted_${file.name}`,
         facesDetected: faceCount,
         originalSize: file.size,
@@ -204,6 +223,11 @@ export const useBlackoutEngine = () => {
   }, [initializeDetector]);
 
   const reset = useCallback(() => {
+    // Clean up preview URL if it exists (using ref to avoid dependency on result)
+    if (previewUrlRef.current) {
+      URL.revokeObjectURL(previewUrlRef.current);
+      previewUrlRef.current = null;
+    }
     // Set status to 'ready' if detector is already initialized, otherwise 'idle'
     setStatus(isInitializedRef.current ? 'ready' : 'idle');
     setResult(null);

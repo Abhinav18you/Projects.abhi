@@ -161,10 +161,10 @@ const BlackoutDropZone = ({ onDrop, status, result, error, onReset }: DropZonePr
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="z-10 text-center"
+            className="z-10 w-full px-6 text-center"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="mb-6">
+            <div className="mb-4">
               <motion.div 
                 className="mx-auto mb-2 h-12 w-12 rounded-full bg-[#00FF41]/10 flex items-center justify-center ring-1 ring-[#00FF41]/50"
                 initial={{ scale: 0.8, opacity: 0 }}
@@ -208,11 +208,33 @@ const BlackoutDropZone = ({ onDrop, status, result, error, onReset }: DropZonePr
               </motion.p>
             </div>
 
+            {/* Preview Image */}
             <motion.div 
-              className="flex gap-3"
+              className="mb-4 rounded-lg overflow-hidden ring-1 ring-white/10 bg-black max-h-[200px]"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ type: "spring", stiffness: 400, damping: 25, delay: 0.3 }}
+            >
+              <img
+                src={result.previewUrl}
+                alt="Redacted preview"
+                className="w-full h-auto max-h-[200px] object-contain"
+              />
+            </motion.div>
+            <motion.p 
+              className="mb-4 text-[10px] text-white/50 font-mono"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25, delay: 0.35 }}
+            >
+              Preview: Verify redaction before downloading
+            </motion.p>
+
+            <motion.div 
+              className="flex gap-3 justify-center"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25, delay: 0.4 }}
             >
               <motion.button
                 onClick={handleDownload}

@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDropzone } from 'react-dropzone';
 import { useSteganography } from '../hooks/useSteganography';
-import { useSteganalysis } from '../hooks/useSteganalysis';
+import { useSteganalysis, ANOMALY_THRESHOLD } from '../hooks/useSteganalysis';
 import { cn } from '../utils/cn';
 
 type TabType = 'hide' | 'extract' | 'xray';
@@ -631,7 +631,43 @@ const XRayTab = ({ status, result, error, onProcess, onReset }: XRayTabProps) =>
                   <ScanIcon className="text-[#00FF41]" />
                 </motion.div>
                 <h3 className="text-xl font-medium tracking-tight text-white/90">LSB BIT-PLANE</h3>
-                <p className="mt-1 text-[10px] text-white/50 font-mono">
+                
+                {/* Verdict Badge */}
+                {result.anomalyScore < ANOMALY_THRESHOLD ? (
+                  <motion.div 
+                    className="mt-4 mb-2"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <div className="inline-block px-6 py-3 rounded-lg bg-green-500/10 ring-2 ring-green-500/50">
+                      <p className="text-lg font-bold tracking-tight text-green-400">
+                        STATUS: CLEAN (Natural Noise)
+                      </p>
+                    </div>
+                    <p className="mt-2 text-[11px] text-white/60 font-mono">
+                      The digital dust looks random. No hidden data detected.
+                    </p>
+                  </motion.div>
+                ) : (
+                  <motion.div 
+                    className="mt-4 mb-2"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <div className="inline-block px-6 py-3 rounded-lg bg-red-500/10 ring-2 ring-red-500/70 shadow-[0_0_30px_rgba(239,68,68,0.3)] animate-pulse">
+                      <p className="text-lg font-bold tracking-tight text-red-400">
+                        WARNING: ANOMALY DETECTED
+                      </p>
+                    </div>
+                    <p className="mt-2 text-[11px] text-white/60 font-mono">
+                      Unnatural mathematical patterns found. This image likely contains a hidden payload.
+                    </p>
+                  </motion.div>
+                )}
+
+                <p className="mt-2 text-[10px] text-white/50 font-mono">
                   {result.width}×{result.height} pixels
                 </p>
                 <p className="mt-1 text-[10px] text-[#00FF41]/70 font-mono">
