@@ -71,14 +71,23 @@ export const useBlackoutEngine = () => {
     height: number,
     blurAmount: number = FACE_BLUR_AMOUNT
   ) => {
-    // Standard bulletproof Canvas clipping method for face blur
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(x, y, width, height);
-    ctx.clip();
-    ctx.filter = `blur(${blurAmount}px)`;
-    ctx.drawImage(originalImage, 0, 0);
-    ctx.restore();
+    // Extract, Blur, and Stamp method
+    // 1. Create an Off-Screen Canvas
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = width;
+    tempCanvas.height = height;
+    const tempCtx = tempCanvas.getContext('2d');
+
+    if (!tempCtx) return;
+
+    // 2. Apply Filter to Temp Context
+    tempCtx.filter = `blur(${blurAmount}px)`;
+
+    // 3. Extract and Draw
+    tempCtx.drawImage(originalImage, x, y, width, height, 0, 0, width, height);
+
+    // 4. Stamp it Back
+    ctx.drawImage(tempCanvas, x, y);
   };
 
   const processImage = useCallback(async (file: File): Promise<BlackoutResult> => {
@@ -154,8 +163,8 @@ export const useBlackoutEngine = () => {
             if (b) resolve(b);
             else reject(new Error('Failed to create blob'));
           },
-          file.type || 'image/png',
-          0.95
+          'image/png',
+          1.0
         );
       });
 
@@ -167,10 +176,14 @@ export const useBlackoutEngine = () => {
       // Clean up original image URL
       URL.revokeObjectURL(imageUrl);
 
+      // Ensure filename ends in .png
+      const originalName = file.name.replace(/\.[^/.]+$/, "");
+      const fileName = `redacted_${originalName}.png`;
+
       const resultData: BlackoutResult = {
         blob,
         previewUrl,
-        fileName: `redacted_${file.name}`,
+        fileName,
         facesDetected: faceCount,
         originalSize: file.size,
         finalSize: blob.size
